@@ -1,9 +1,8 @@
-package com.example.odev.servis;
+package com.example.odev.service;
 
 import com.example.odev.entity.Product;
 import com.example.odev.repository.ProductRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;

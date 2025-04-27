@@ -1,7 +1,7 @@
 package com.example.odev.controller;
 
 import com.example.odev.entity.Product;
-import com.example.odev.servis.ProductService;
+import com.example.odev.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
