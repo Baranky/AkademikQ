@@ -20,15 +20,15 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<Product> getById(@PathVariable int id){
+    public Optional<Product> getById(int id){
         return productRepository.findById(id);
     }
 
-    public void save(@RequestBody Product product){
+    public void save(Product product){
         productRepository.save(product);
     }
 
-    public  void update(@PathVariable int id, @RequestBody Product product){
+    public  void update(int id, Product product){
         Product newProduct=productRepository.getReferenceById(id);
         newProduct.setId(newProduct.getId());
         newProduct.setName(product.getName());
@@ -37,7 +37,7 @@ public class ProductService {
         productRepository.save(newProduct);
     }
 
-    public  void  delete(@PathVariable int id){
+    public  void  delete( int id){
         productRepository.deleteById(id);
     }
 
