@@ -36,10 +36,6 @@ public class InstructorController {
     }
     @PutMapping("/{id}")
     public InstructorRes updateApplicant(@RequestBody InstructorReq request,@PathVariable Long id){
-        try {
             return instructorService.update(id,request);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

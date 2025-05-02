@@ -34,10 +34,7 @@ public class EmployeeController {
     }
     @PutMapping("/{id}")
     public EmployeeRes updateEmployee(@RequestBody EmployeeReq request,@PathVariable Long id){
-        try {
+
             return employeeService.update(id,request);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

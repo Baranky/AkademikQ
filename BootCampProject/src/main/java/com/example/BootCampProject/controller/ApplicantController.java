@@ -33,11 +33,7 @@ public class ApplicantController {
     }
     @PutMapping("/{id}")
     public ApplicantRes updateApplicant(@RequestBody ApplicantReq request,@PathVariable Long id){
-        try {
             return applicantService.update(id,request);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }

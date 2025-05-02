@@ -2,6 +2,7 @@ package com.example.BootCampProject.service;
 
 import com.example.BootCampProject.dto.req.EmployeeReq;
 import com.example.BootCampProject.dto.res.EmployeeRes;
+import com.example.BootCampProject.entity.Employee;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface EmployeeService {
     EmployeeRes getById(Long id);
     List<EmployeeRes> getList();
     void delete(Long id);
+    Employee findEmployeeById(Long id);
 }

@@ -1,0 +1,78 @@
+1. Entity Katmanı
+Aşağıdaki entity sınıflarını oluşturunuz:
+Application Entity
+•	Alanlar:
+o	id
+o	applicantId
+o	bootcampId
+o	ApplicationState applicationState
+•	Enum:
+ApplicationState
+PENDING, APPROVED, REJECTED, IN_REVIEW, CANCELLED
+ Bootcamp Entity
+•	Alanlar:
+o	id
+o	name
+o	instructorId
+o	startDate
+o	endDate
+o	BootcampState bootcampState
+•	Enum:
+BootcampState
+PREPARING, OPEN_FOR_APPLICATION, IN_PROGRESS, FINISHED, CANCELLED
+ Blacklist Entity
+•	Alanlar:
+o	id
+o	reason
+o	date
+o	applicantId
+Not:
+Blacklist tablosu, belirli bir sebep nedeniyle bir öğrencinin başvuru yapmasının engellenmesi için kullanılacaktır.
+________________________________________
+2. Repository Katmanı
+•	Her entity için bir repository interface oluşturunuz.
+o	ApplicationRepository
+o	BootcampRepository
+o	BlacklistRepository
+•	Repository'lerde temel CRUD işlemlerini sağlayacak yapıları oluşturunuz.
+ Custom Repository Methods
+Her repository içine en az 1 adet custom method yazınız.
+Örneğin:
+List<Application> findByApplicantId(int applicantId);
+List<Bootcamp> findByBootcampState(BootcampState bootcampState);
+List<Blacklist> findByApplicantId(int applicantId);
+(Spring Data JPA metot isimlendirme kurallarına uygun şekilde.)
+________________________________________
+3. Service Katmanı (Service - ServiceImpl Yapısı)
+•	Her entity için ayrı bir Service Interface ve ServiceImpl sınıfı oluşturunuz.
+o	Örneğin:
+	ApplicationService
+	ApplicationServiceImpl
+	BootcampService
+	BootcampServiceImpl
+	BlacklistService
+	BlacklistServiceImpl
+•	Service katmanında Request ve Response nesnelerini oluşturunuz.
+o	Create, Update, Delete işlemleri için farklı DTO'lar (request ve response classları) oluşturunuz.
+MapStruct Kullanımı
+•	Entity ↔️ Request ↔️ Response dönüşümlerini MapStruct ile yapınız.
+o	Örneğin:
+@Mapping(target = "applicantId", source = "applicantId")
+Application createApplicationRequestToApplication(CreateApplicationRequest request);
+
+@Mapping(target = "id", source = "id")
+GetApplicationResponse applicationToGetApplicationResponse(Application application);
+•	Her entity için bir MapStruct Mapper interface yazınız.
+Örneğin: ApplicationMapper, BootcampMapper, BlacklistMapper
+________________________________________
+4. WebAPI Katmanı (Controller Yapısı)
+•	Her entity için bir Controller sınıfı oluşturunuz.
+o	ApplicationController
+o	BootcampController
+o	BlacklistController
+•	Controller'larda temel CRUD endpointlerini yazınız.
+o	POST (Create)
+o	GET (GetAll, GetById)
+o	PUT (Update)
+o	DELETE (Delete)
+

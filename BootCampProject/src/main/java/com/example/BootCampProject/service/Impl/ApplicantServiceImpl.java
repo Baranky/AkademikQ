@@ -5,10 +5,14 @@ import com.example.BootCampProject.dto.res.ApplicantRes;
 import com.example.BootCampProject.entity.Applicant;
 import com.example.BootCampProject.repository.ApplicantRepository;
 import com.example.BootCampProject.service.ApplicantService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.BootCampProject.mapper.ApplicantMapper.mapToApplicant;
+import static com.example.BootCampProject.mapper.ApplicantMapper.mapToResponse;
 
 @Service
 public class ApplicantServiceImpl implements ApplicantService {
@@ -18,31 +22,29 @@ public class ApplicantServiceImpl implements ApplicantService {
         this.applicantRepository = applicantRepository;
     }
 
+
     @Override
     public ApplicantRes add(ApplicantReq request) {
-        Applicant applicant=mapToApplication(request);
+        Applicant applicant=mapToApplicant(request);
         Applicant newApplicant=applicantRepository.save(applicant);
         return mapToResponse(newApplicant);
     }
 
     @Override
     public ApplicantRes update(Long id,ApplicantReq request)  {
-        Applicant existingApplicant = null;
-        try {
-            existingApplicant = applicantRepository.findById(id).orElseThrow(() ->
-                    new Exception("Applicant not found with id: " + id));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        Applicant updatedApplicant = mapToApplication(request);
-        updatedApplicant.setId(existingApplicant.getId()); // Mevcut ID'yi koruyoruz
-        Applicant savedApplicant = applicantRepository.save(updatedApplicant);
-        return mapToResponse(savedApplicant);
+        Applicant applicant = applicantRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("applicant not found"));
+
+        Applicant updated = mapToApplicant(request);
+        updated.setId(applicant.getId());
+        Applicant saved = applicantRepository.save(updated);
+        return mapToResponse(saved);
     }
 
     @Override
     public ApplicantRes getById(Long id) {
-       Applicant applicant=applicantRepository.getReferenceById(id);
+       Applicant applicant=applicantRepository.findById(id).
+               orElseThrow(()->new EntityNotFoundException("applicant not found"));
        return mapToResponse(applicant);
     }
 
@@ -61,30 +63,11 @@ public class ApplicantServiceImpl implements ApplicantService {
         applicantRepository.deleteById(id);
 
     }
-    private ApplicantRes mapToResponse(Applicant applicant){
-        ApplicantRes response=new ApplicantRes(
-                applicant.getId(),
-                applicant.getUsername(),
-                applicant.getFirstName(),
-                applicant.getLastName(),
-                applicant.getDateOfBirth(),
-                applicant.getNationalIdentity(),
-                applicant.getEmail(),
-                applicant.getPassword(),
-                applicant.getAbout()
-        );
-        return response;
+
+    @Override
+    public Applicant findById(Long id) {
+        return applicantRepository.findApplicantById(id).
+                orElseThrow(()->new EntityNotFoundException("applicant not found"));
     }
-    private Applicant mapToApplication(ApplicantReq request){
-        Applicant applicant=new Applicant();
-        applicant.setUsername(request.username());
-        applicant.setFirstName(request.firstName());
-        applicant.setLastName(request.lastName());
-        applicant.setDateOfBirth(request.dateOfBirth());
-        applicant.setNationalIdentity(request.nationalIdentity());
-        applicant.setEmail(request.email());
-        applicant.setPassword(request.password());
-        applicant.setAbout(request.about());
-        return applicant;
-    }
+
 }

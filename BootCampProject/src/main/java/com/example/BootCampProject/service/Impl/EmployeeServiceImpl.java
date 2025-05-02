@@ -5,10 +5,14 @@ import com.example.BootCampProject.dto.res.EmployeeRes;
 import com.example.BootCampProject.entity.Employee;
 import com.example.BootCampProject.repository.EmployeeRepository;
 import com.example.BootCampProject.service.EmployeeService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.BootCampProject.mapper.EmployeeMapper.mapToEmployee;
+import static com.example.BootCampProject.mapper.EmployeeMapper.mapToResponse;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -26,22 +30,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeRes update(Long id,EmployeeReq request) {
-        Employee existingEmployee = null;
-        try {
-            existingEmployee = employeeRepository.findById(id).orElseThrow(() ->
-                    new Exception("Employee not found with id: " + id));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        Employee updatedEmployee = mapToEmployee(request);
-        updatedEmployee.setId(existingEmployee.getId()); // Mevcut ID'yi koruyoruz
-        Employee savedEmployee = employeeRepository.save(updatedEmployee);
-        return mapToResponse(savedEmployee);
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
+
+        Employee updated = mapToEmployee(request);
+        updated.setId(employee.getId());
+        Employee saved = employeeRepository.save(updated);
+        return mapToResponse(saved);
     }
 
     @Override
     public EmployeeRes getById(Long id) {
-        Employee employee=employeeRepository.getReferenceById(id);
+         Employee employee=employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("employee not found with id: " + id));
         return mapToResponse(employee);
     }
 
@@ -61,30 +61,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     }
 
-    private EmployeeRes mapToResponse(Employee employee){
-        EmployeeRes response=new EmployeeRes(
-                employee.getId(),
-                employee.getUsername(),
-                employee.getFirstName(),
-                employee.getLastName(),
-                employee.getDateOfBirth(),
-                employee.getNationalIdentity(),
-                employee.getEmail(),
-                employee.getPassword(),
-                employee.getPosition()
-        );
-        return response;
+    @Override
+    public Employee findEmployeeById(Long id) {
+        return employeeRepository.findEmployeeById(id).
+                orElseThrow(()-> new EntityNotFoundException("employee not found"));
     }
-    private Employee mapToEmployee (EmployeeReq request){
-        Employee employee=new Employee();
-        employee.setUsername(request.username());
-        employee.setFirstName(request.firstName());
-        employee.setLastName(request.lastName());
-        employee.setDateOfBirth(request.dateOfBirth());
-        employee.setNationalIdentity(request.nationalIdentity());
-        employee.setEmail(request.email());
-        employee.setPassword(request.password());
-        employee.setPosition(request.position());
-        return employee;
-    }
+
+
 }
